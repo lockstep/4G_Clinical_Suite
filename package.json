@@ -1,0 +1,25 @@
+{
+  "name": "4gclinical",
+  "version": "1.0.0",
+  "description": "test challenge",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "tsc": "tsc",
+    "pretest": "npm run tsc",
+    "test": "protractor tmp/conf.js",
+    "debug": "node --inspect --debug-brk ./node_modules/.bin/protractor asyncAwait/conf.js"
+  },
+  "dependencies": {
+    "@types/jasmine": "2.6.0",
+    "@types/jasminewd2": "2.0.3",
+    "jasmine": "2.8.0",
+    "node-fetch": "^1.7.3",
+    "protractor": "file:../protractor/",
+    "typescript": "2.5.3"
+  },
+  "devDependencies": {
+    "@types/jasminewd2": "2.0.3",
+    "ts-node": "3.3.0"
+  }
+}
