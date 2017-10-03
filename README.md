@@ -1,19 +1,6 @@
 # Protractor with Typescript
 
-Typescript provides code auto completion and helpful hints with a text editor like Microsoft's Visual Studio Code or another text editor with Typescript support.
-
-Note that this example uses TypeScript 2.0.
-
-## Examples
-
-There are two examples in this directory:
-
-* Simple Protractor example
-  * Similar to the [github protractor example](https://github.com/angular/protractor/tree/master/example)
-  * Files `conf.ts` and `spec.ts`
-* Page objects example
-  * Follows the [protractortest.org page objects example](http://www.protractortest.org/#/page-objects)
-  * Files `confPageObjects.ts`, `specPageObjects.ts`, and `angularPage.ts`
+NOTE: This code is based on the [Protractor Typescript Example](https://github.com/angular/protractor/tree/master/exampleTypescript).
 
 ## File organization
 
@@ -33,53 +20,42 @@ exampleTypescript/
 |- tsconfig.json       // typescript transpile configuration
 ```
 
-
 ## Getting started
 
-This package.json references the local protractor directory with `"protractor": "file: ../"`. For the type declarations to work, from the protractor directory run an `npm install` to generate the declarations file.
+This package.json references the local protractor directory with
+`"protractor": "file: ../"`. For the type declarations to work, from
+the protractor directory run an `npm install` to generate the declarations
+file. If you do not have a `protractor` directory, clone one:
 
-Next, install the exampleTypescript node_modules with:
+```
+cd ..; git clone git@github.com:angular/protractor.git
+```
+
+Now install your dependencies:
 
 ```
 npm install
 ```
 
-
-## Protractor typings
-
-To use Protractor types, you'll need to import `protractor`. After this is imported, you should have autocompletion hints when typing.
+Make sure you have an updated web driver:
 
 ```
-import {browser, element, by, By, $, $$, ExpectedConditions} from 'protractor';
+../protractor/bin/webdriver-manager update
 ```
 
-Although the Protractor configuration file can be written in javascript, creating it in typescript will have some hints. These hints and the reference configuration can be found in `lib/config.ts`. Below we are importing the Config interface and applying that interface to the config variable:
+## Running Specs
+
+First, start your web driver:
 
 ```
-import {Config} from 'protractor';
-
-export let config: Config = {
-  ...
-}
+../protractor/bin/webdriver-manager start
 ```
 
-## Ambient typings
-
-Protractor also uses ambient types including jasmine, jasminewd2, and node. These are brought in via the `tsconfig.json` file, which uses npm module resolution to get types from `node_modules/@types`.
-
-If you are using the jasmine framework for your tests, make sure to do:
+Then you can run your test suite:
 
 ```
-npm install --save-dev @types/jasmine @types/jasminewd2
+npm test
 ```
-
-## Compiling your code
-
-To convert your typescript to javascript (transpiling), you'll use the Typescript compiler (tsc). If you install typescript globally, the command is `tsc`. If it is not installed globally, the typescript compiler can be executed with `npm run tsc`.
-
-## Running Protractor
-
-After transpiling your code to javascript, you'll run Protractor like before: `protractor conf.js`
 
 ## Helpful links
 
