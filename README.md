@@ -2,24 +2,6 @@
 
 NOTE: This code is based on the [Protractor Typescript Example](https://github.com/angular/protractor/tree/master/exampleTypescript).
 
-## File organization
-
-```
-exampleTypescript/
-|- node_modules/       // downloaded node modules
-|- tmp/                // compiled javascript output
-|
-|- .gitignore          // since typescript produces javascript, we should not
-|                      // commit javascript to the repo
-|- angularPage.ts      // page object example
-|- confPageObjects.ts  // configuration for the page objects example
-|- package.json        // node dependencies for the project
-|- README.md           // this file
-|- spec.ts             // spec for the simple protractor example
-|- specPageObjects.ts  // spec for the page objects example
-|- tsconfig.json       // typescript transpile configuration
-```
-
 ## Getting started
 
 This package.json references the local protractor directory with
@@ -56,6 +38,8 @@ Then you can run your test suite:
 ```
 npm test
 ```
+
+Specs/Scenarios and spec helpers are in the `specs/` directory.
 
 ## Helpful links
 
