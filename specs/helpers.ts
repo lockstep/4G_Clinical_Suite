@@ -22,14 +22,19 @@ export let provisionStudy = async function (studyId: string, options = { clear: 
 }
 
 export let selectStudy = function (studyId: string, site: string) {
-
+  $('.md-nav-bar-study').click();
+  // NOTE: research suggests that `sendKeys` is the most reliable way to select
+  // options while staying independent of nested markup.
+  element(by.model('ctrl.studyCode')).sendKeys(studyId);
+  element(by.model('ctrl.siteCode')).sendKeys(site);
+  clickButton('Select');
 }
 
-export let clickLink = function(text: string) {
+export let clickLink = function (text: string) {
   element(by.cssContainingText('a', text)).click();
 }
 
-export let clickButton = function(text: string) {
+export let clickButton = function (text: string) {
   element(by.buttonText(text)).click();
 }
 

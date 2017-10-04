@@ -10,6 +10,7 @@ import {
 describe('TC1: Screen a patient', () => {
   beforeAll(() => {
     prancerAdminLogin();
+    selectStudy('e2e_study_01', '102');
     // TODO: See if we can use a clean API endpoint for provisioning. Sent
     // email to 4G team.
     // provisionStudy('e2e_study_01');
@@ -21,10 +22,6 @@ describe('TC1: Screen a patient', () => {
   beforeEach(() => browser.setLocation('/'));
 
   it('Adds a patient to the patient list', () => {
-    // TODO: Select correct study from dropdown after provisioning
-    // is implemented.
-    // selectStudy('e2e_study_01');
-
     clickLink('Patients');
     let patientRows = element.all(by.repeater('patient in patients'));
     // NOTE: Using snake case per spec document...should be camelCase here.
