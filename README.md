@@ -1,4 +1,4 @@
-# Protractor with Typescript
+# 4G Clinical Test Suite
 
 NOTE: This code is based on the [Protractor Typescript Example](https://github.com/angular/protractor/tree/master/exampleTypescript).
 
