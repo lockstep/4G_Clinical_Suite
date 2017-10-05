@@ -1,4 +1,6 @@
-import { browser, element, by, By, $, $$, ExpectedConditions }
+import {
+  browser, element, by, By, $, $$, ExpectedConditions
+}
   from 'protractor';
 
 // TODO: Seems like this only works via require? Also, no way to authenticate
@@ -6,15 +8,53 @@ import { browser, element, by, By, $, $$, ExpectedConditions }
 // to the 4G team.
 import fetch from 'node-fetch'
 
-export const provisionStudy = async (studyId: string, options = { clear: false }) => {
-  let endpoint = "https://lockstep.4gclinical.com/test-api/studyprovision"
+// TODO: Move credential
+const adminEmail = 'admin@4gclinical.com';
+const adminPassword = 'admin';
+
+export let authenticate = async function () {
+  let endpoint = "https://lockstep.4gclinical.com/api/v1/auth/login"
+  let headers = new fetch.Headers({'Content-Type': 'application/json'})
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({email: adminEmail, password: adminPassword}),
+      headers: headers
+    });
+
+    return response;
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+export const provisionStudy = async (studyId: string, options = {clean: false}) => {
+  let corsProxyServer = 'http://localhost:1337/'
+  let endpoint = `${corsProxyServer}lockstep.4gclinical.com/test-api/studyprovision`
 
   // TODO: better error handling for fetches
   try {
-    await fetch(endpoint, {
-      method: 'POST',
-      body: JSON.stringify({ study: studyId, clear: options.clear })
+    const authResponse = await authenticate()
+
+    let cookieString = toCookieString(authResponse)
+    const userData = await authResponse.json()
+
+    let cookie = `${cookieString} authenticatedUser=${encodeURIComponent(JSON.stringify(userData))}`
+
+    let headers = new fetch.Headers({
+      'Content-Type': 'application/json',
+      'X-CSRFTOKEN': parseCsrfToken(authResponse),
+      'Cookie': cookie,
     });
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({study: studyId, clean: options.clean}),
+      credentials: 'same-origin',
+      headers: headers
+    })
+
+    console.log(response);
   } catch (err) {
     console.log(err);
   }
@@ -39,7 +79,45 @@ export const clickButton = (text: string) => {
 
 export const prancerAdminLogin = () => {
   browser.get('https://lockstep.4gclinical.com');
-  element(by.model('email')).sendKeys('admin@4gclinical.com');
-  element(by.model('password')).sendKeys('admin');
+  element(by.model('email')).sendKeys(adminEmail);
+  element(by.model('password')).sendKeys(adminPassword);
   clickButton('Login');
+}
+
+export let parseCookieObject = (response) => {
+  let cookiesObject = {};
+
+  response.headers._headers['set-cookie'].forEach(function(cookieStr) {
+    let cookieSplit = cookieStr.split('=');
+    cookiesObject[cookieSplit[0]] = decodeURIComponent(cookieSplit[1]);
+    if (cookiesObject[cookieSplit[0]].match(/^[{]/)) {
+      cookiesObject[cookieSplit[0]] = JSON.parse(cookiesObject[cookieSplit[0]]);
+    }
+  });
+
+  return cookiesObject;
+}
+
+export let toCookieString = (response) => {
+  let cookies = parseCookieObject(response);
+
+  let cookieString = "";
+  for(let key in cookies) {
+    cookieString += `${key}=${cookies[key].split(';')[0]}; `
+  }
+
+  return cookieString
+}
+
+export let parseCsrfToken = (response) => {
+  let cookies = parseCookieObject(response);
+
+  let csrf = "";
+  for(let key in cookies) {
+    if(key === 'csrftoken') {
+      csrf = cookies[key]
+    }
+  }
+
+  return csrf;
 }
