@@ -4,9 +4,9 @@ import { browser, element, by, By, $, $$, ExpectedConditions }
 // TODO: Seems like this only works via require? Also, no way to authenticate
 // if you do it this way...needs the browser auth cookies no? See my email
 // to the 4G team.
-import { fetch } from 'node-fetch'
+import fetch from 'node-fetch'
 
-export let provisionStudy = async function (studyId: string, options = { clear: false }) {
+export const provisionStudy = async (studyId: string, options = { clear: false }) => {
   let endpoint = "https://lockstep.4gclinical.com/test-api/studyprovision"
 
   // TODO: better error handling for fetches
@@ -18,10 +18,9 @@ export let provisionStudy = async function (studyId: string, options = { clear: 
   } catch (err) {
     console.log(err);
   }
-
 }
 
-export let selectStudy = function (studyId: string, site: string) {
+export const selectStudy = (studyId: string, site: string) => {
   $('.md-nav-bar-study').click();
   // NOTE: research suggests that `sendKeys` is the most reliable way to select
   // options while staying independent of nested markup.
@@ -30,18 +29,17 @@ export let selectStudy = function (studyId: string, site: string) {
   clickButton('Select');
 }
 
-export let clickLink = function (text: string) {
+export const clickLink = (text: string) => {
   element(by.cssContainingText('a', text)).click();
 }
 
-export let clickButton = function (text: string) {
+export const clickButton = (text: string) => {
   element(by.buttonText(text)).click();
 }
 
-// Only used for authenticating the API for now, so we use the driver directly
-export let prancerAdminLogin = function () {
+export const prancerAdminLogin = () => {
   browser.get('https://lockstep.4gclinical.com');
   element(by.model('email')).sendKeys('admin@4gclinical.com');
   element(by.model('password')).sendKeys('admin');
-  element(by.id('login__submit')).click();
+  clickButton('Login');
 }
