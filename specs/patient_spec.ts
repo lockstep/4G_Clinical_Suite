@@ -23,10 +23,8 @@ describe('TC1: Screen a patient', () => {
   beforeEach(() => browser.setLocation('/'));
 
   it('Adds a patient to the patient list', () => {
-    // TODO: Select correct study from dropdown after provisioning
-    // is implemented.
     clickLink('Patients');
-    browser.pause();
+
     let patientRows = element.all(by.repeater('patient in patients'));
     // NOTE: Using snake case per spec document...should be camelCase here.
     patientRows.count().then(n_patients_before => {
