@@ -1,7 +1,6 @@
 import {
   browser, element, by, By, $, $$, ExpectedConditions
-}
-  from 'protractor';
+} from 'protractor';
 
 // TODO: Seems like this only works via require? Also, no way to authenticate
 // if you do it this way...needs the browser auth cookies no? See my email
@@ -29,32 +28,31 @@ export let authenticate = async function () {
 }
 
 export const provisionStudy = async (studyId: string, options = {clean: false}) => {
-  let corsProxyServer = 'http://localhost:1337/'
-  let endpoint = `${corsProxyServer}lockstep.4gclinical.com/test-api/studyprovision`
+  const corsProxyServer = 'http://localhost:1337/'
+  const endpoint = `${corsProxyServer}lockstep.4gclinical.com/test_api/studyprovision`
 
   // TODO: better error handling for fetches
   try {
     const authResponse = await authenticate()
-
-    let cookieString = toCookieString(authResponse)
     const userData = await authResponse.json()
 
-    let cookie = `${cookieString} authenticatedUser=${encodeURIComponent(JSON.stringify(userData))}`
+    const cookiesObject = parseCookieObject(authResponse)
+    const cookieString = toCookieString(cookiesObject)
 
-    let headers = new fetch.Headers({
+    const cookie = `${cookieString} authenticatedUser=${encodeURIComponent(JSON.stringify(userData))}`
+
+    const headers = new fetch.Headers({
       'Content-Type': 'application/json',
-      'X-CSRFTOKEN': parseCsrfToken(authResponse),
-      'Cookie': cookie,
-    });
+      'X-CSRFTOKEN': findCookie(cookiesObject, 'csrftoken'),
+      'Cookie': cookie
+    })
 
     const response = await fetch(endpoint, {
       method: 'POST',
       body: JSON.stringify({study: studyId, clean: options.clean}),
-      credentials: 'same-origin',
+      credentials: 'include',
       headers: headers
     })
-
-    console.log(response);
   } catch (err) {
     console.log(err);
   }
@@ -84,7 +82,7 @@ export const prancerAdminLogin = () => {
   clickButton('Login');
 }
 
-export let parseCookieObject = (response) => {
+export const parseCookieObject = (response) => {
   let cookiesObject = {};
 
   response.headers._headers['set-cookie'].forEach(function(cookieStr) {
@@ -98,26 +96,21 @@ export let parseCookieObject = (response) => {
   return cookiesObject;
 }
 
-export let toCookieString = (response) => {
-  let cookies = parseCookieObject(response);
-
+export const toCookieString = (cookiesObject) => {
   let cookieString = "";
-  for(let key in cookies) {
-    cookieString += `${key}=${cookies[key].split(';')[0]}; `
+  for(let key in cookiesObject) {
+    cookieString += `${key}=${cookiesObject[key].split(';')[0]}; `
   }
 
   return cookieString
 }
 
-export let parseCsrfToken = (response) => {
-  let cookies = parseCookieObject(response);
-
+export let findCookie = (cookiesObject, name) => {
   let csrf = "";
-  for(let key in cookies) {
-    if(key === 'csrftoken') {
-      csrf = cookies[key]
+  for(let key in cookiesObject) {
+    if(key === name) {
+      csrf = cookiesObject[name].split(';')[0]
     }
   }
-
   return csrf;
-}
+};
