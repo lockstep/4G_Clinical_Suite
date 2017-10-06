@@ -58,15 +58,6 @@ export const provisionStudy = async (studyId: string, options = { clean: false }
   }
 }
 
-export const selectStudy = (studyId: string, site: string) => {
-  $('.md-nav-bar-study').click();
-  // NOTE: research suggests that `sendKeys` is the most reliable way to select
-  // options while staying independent of nested markup.
-  element(by.model('ctrl.studyCode')).sendKeys(studyId);
-  element(by.model('ctrl.siteCode')).sendKeys(site);
-  clickButton('Select');
-}
-
 export const clickLink = (text: string) => {
   element(by.cssContainingText('a', text)).click();
 }
