@@ -1,4 +1,4 @@
-import {browser, element, by, $} from 'protractor';
+import { browser, element, by, $ } from 'protractor';
 import {
   clickLink,
   clickButton,
@@ -17,7 +17,7 @@ describe('TC1: Screen a patient', () => {
   }, 90000);
 
   afterAll(async () => {
-    await provisionStudy('e2e_study_01', {clean: true})
+    await provisionStudy('e2e_study_01', { clean: true })
   }, 90000)
 
   // NOTE: Return to home after each scenario.

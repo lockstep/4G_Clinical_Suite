@@ -13,11 +13,11 @@ const adminPassword = 'admin';
 
 export let authenticate = async function () {
   let endpoint = "https://lockstep.4gclinical.com/api/v1/auth/login"
-  let headers = new fetch.Headers({'Content-Type': 'application/json'})
+  let headers = new fetch.Headers({ 'Content-Type': 'application/json' })
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
-      body: JSON.stringify({email: adminEmail, password: adminPassword}),
+      body: JSON.stringify({ email: adminEmail, password: adminPassword }),
       headers: headers
     });
 
@@ -27,9 +27,8 @@ export let authenticate = async function () {
   }
 }
 
-export const provisionStudy = async (studyId: string, options = {clean: false}) => {
-  const corsProxyServer = 'http://localhost:1337/'
-  const endpoint = `${corsProxyServer}lockstep.4gclinical.com/test_api/studyprovision`
+export const provisionStudy = async (studyId: string, options = { clean: false }) => {
+  const endpoint = 'https://lockstep.4gclinical.com/test_api/studyprovision'
 
   // TODO: better error handling for fetches
   try {
@@ -44,12 +43,13 @@ export const provisionStudy = async (studyId: string, options = {clean: false}) 
     const headers = new fetch.Headers({
       'Content-Type': 'application/json',
       'X-CSRFTOKEN': findCookie(cookiesObject, 'csrftoken'),
-      'Cookie': cookie
+      'Cookie': cookie,
+      'Origin': 'https://lockstep.4gclinical.com'
     })
 
     const response = await fetch(endpoint, {
       method: 'POST',
-      body: JSON.stringify({study: studyId, clean: options.clean}),
+      body: JSON.stringify({ study: studyId, clean: options.clean }),
       credentials: 'include',
       headers: headers
     })
@@ -85,7 +85,7 @@ export const prancerAdminLogin = () => {
 export const parseCookieObject = (response) => {
   let cookiesObject = {};
 
-  response.headers._headers['set-cookie'].forEach(function(cookieStr) {
+  response.headers._headers['set-cookie'].forEach(function (cookieStr) {
     let cookieSplit = cookieStr.split('=');
     cookiesObject[cookieSplit[0]] = decodeURIComponent(cookieSplit[1]);
     if (cookiesObject[cookieSplit[0]].match(/^[{]/)) {
@@ -98,7 +98,7 @@ export const parseCookieObject = (response) => {
 
 export const toCookieString = (cookiesObject) => {
   let cookieString = "";
-  for(let key in cookiesObject) {
+  for (let key in cookiesObject) {
     cookieString += `${key}=${cookiesObject[key].split(';')[0]}; `
   }
 
@@ -107,8 +107,8 @@ export const toCookieString = (cookiesObject) => {
 
 export let findCookie = (cookiesObject, name) => {
   let csrf = "";
-  for(let key in cookiesObject) {
-    if(key === name) {
+  for (let key in cookiesObject) {
+    if (key === name) {
       csrf = cookiesObject[name].split(';')[0]
     }
   }
