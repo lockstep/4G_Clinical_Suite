@@ -2,20 +2,22 @@ import {
   browser, element, by, By, $, $$, ExpectedConditions
 } from 'protractor';
 
-import { clickButton } from './helpers';
+import { clickButton, clickLink } from './helpers';
 
-class Prancer {
+class PrancerUI {
   studyDropDown: any
-  patientRows: any
-  yearOfBirthInput: any
 
   constructor() {
     this.studyDropDown = $('.md-nav-bar-study');
-    this.patientRows = element.all(by.repeater('patient in patients'));
-    // NOTE: Both the input name and ng-model are generic (input and
-    // ngModel respectively) so unfortunately there doesn't seem to be a
-    // better way to reference this input.
-    this.yearOfBirthInput = element(by.name('input'));
+  }
+
+  goToHomepage() {
+    browser.setLocation('/');
+  }
+
+  // TODO: this should be more specific about only clicking links in the menu
+  clickMenuItem(menuItem: string) {
+    clickLink(menuItem);
   }
 
   selectStudy(studyId: string, site: string) {
@@ -27,18 +29,9 @@ class Prancer {
     clickButton('Select');
   }
 
-  countPatientRows() {
-    return this.patientRows.count();
-  }
-
-  enterYearOfBirth(input) {
-    this.yearOfBirthInput.sendKeys(input);
-    clickButton('Next');
-  }
-
   pageBody() {
     return $('body').getText();
   }
 }
 
-export default Prancer;
+export default PrancerUI;

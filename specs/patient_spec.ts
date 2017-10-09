@@ -1,18 +1,18 @@
-import { browser, element, by, $ } from 'protractor';
 import {
-  clickLink,
   clickButton,
   provisionStudy,
   prancerAdminLogin,
 } from './helpers';
 
-import Prancer from './prancer'
+import PrancerUI from './prancer'
+import PatientsPage from './patients_page'
 
 describe('TC1: Screen a patient', () => {
-  const prancer = new Prancer()
+  const prancer = new PrancerUI();
+  const patients_page = new PatientsPage();
 
   beforeAll(async () => {
-    await provisionStudy('e2e_study_02')
+    await provisionStudy('e2e_study_02');
 
     prancerAdminLogin();
   }, 90000);
@@ -23,30 +23,30 @@ describe('TC1: Screen a patient', () => {
 
   // NOTE: Return to home after each scenario, then select the first study.
   beforeEach(() => {
-    browser.setLocation('/');
+    prancer.goToHomepage();
     prancer.selectStudy('e2e_study_01', '102');
   });
 
   it('Adds a patient to the patient list', async () => {
-    clickLink('Patients');
+    prancer.clickMenuItem('Patients');
 
-    const nPatientsBefore = await prancer.countPatientRows();
+    const nPatientsBefore = await patients_page.countPatientRows();
 
     clickButton('Screen a patient');
-    prancer.enterYearOfBirth('1960');
+    patients_page.enterYearOfBirth('1960');
     clickButton('Submit');
     // Back to patients list
     clickButton('Back to patients');
 
-    const nPatientsAfter = await prancer.countPatientRows();
+    const nPatientsAfter = await patients_page.countPatientRows();
     expect(nPatientsAfter).toEqual(nPatientsBefore + 1);
   });
 
   it('Shows a validation error for invalid birth years', () => {
-    clickLink('Patients');
+    prancer.clickMenuItem('Patients');
 
     clickButton('Screen a patient');
-    prancer.enterYearOfBirth('1000')
+    patients_page.enterYearOfBirth('1000')
     // NOTE: We could look at a specific model or div but we mainly just
     // want to ensure this message appears ANYWHERE on the page.
     expect(prancer.pageBody()).toContain(
